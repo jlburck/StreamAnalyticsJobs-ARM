@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+	    "streamingjobs_name": {
+            "value":"jobname",
+            "type":"String"
+        },
+        "ehub_name": {
+            "value":"ehubname",
+            "type":"String"
+        },
+        "ehub_namespace": {
+            "value": "ehubnamespace",
+            "type":"String"
+        },
+        "topic_name1": {
+            "value": "topicname1",
+            "type":"String"
+        },
+        "topic_name2": {
+            "value": "topicname2",
+            "type":"String"
+        },
+        "topic_namespace": {
+            "value": "topicnamespace",
+            "type":"String"
+        },
+        "subscriptionID": {
+            "value": "subscriptionid",
+          	"type":"String"
+        },
+        "ehub_ResourceGroupName": {
+            "value": "ehubresourcegroupname",
+            "type":"String"
+        },
+        "topic_ResourceGroupName": {
+            "value": "topicresourcegroupname",
+            "type":"String"
+        }
+    }
+}

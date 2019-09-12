@@ -1,0 +1,139 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+	"streamingjobs_name": {
+          "type":"String"
+        },
+        "ehub_name": {
+          "type":"String"
+        },
+        "ehub_namespace": {
+          "type":"String"
+        },
+        "ehub_ResourceGroupName": {
+          "type":"String"
+        },
+		"ehub_sharedAccessPolicyName": {
+		  "type":"String"
+		},
+        "topic_name1": {
+          "type":"String"
+        },
+        "topic_name2": {
+          "type":"String"
+        },
+        "topic_namespace": {
+          "type":"String"
+        },
+        "topic_ResourceGroupName": {
+          "type":"String"
+        },
+		"topic_sharedAccessPolicyName": {
+		  "type":"String"
+		},
+        "subscriptionID": {
+          "type":"String"
+        }
+  }, 
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2016-03-01",
+      "name": "[parameters('streamingjobs_name')]",
+      "location": "[resourceGroup().location]",
+      "type": "Microsoft.StreamAnalytics/StreamingJobs",
+      "properties": {
+        "sku": {
+          "name": "standard"
+        },
+		"outputStartMode": "JobStartTime",
+        "outputErrorPolicy": "stop",
+        "eventsOutOfOrderPolicy": "adjust",
+        "eventsOutOfOrderMaxDelayInSeconds": 0,
+        "eventsLateArrivalMaxDelayInSeconds": 5,
+        "dataLocale": "en-US",
+        "compatibilityLevel": "1.1",
+        "inputs": [
+          {
+            "Name": "rcpevents",
+            "properties": {
+                "type": "Stream",
+                "datasource": {
+                    "type": "Microsoft.ServiceBus/EventHub",
+                    "properties": {
+                        "serviceBusNamespace": "[parameters('ehub_namespace')]",
+                        "sharedAccessPolicyName": "[parameters('ehub_sharedAccessPolicyName')]",
+                        "sharedAccessPolicyKey": "[listkeys(resourceId(parameters('subscriptionID'), parameters('ehub_ResourceGroupName'), 'Microsoft.EventHub/namespaces/authorizationRules', parameters('ehub_namespace'), parameters('ehub_sharedAccessPolicyName')), '2017-04-01').primaryKey]",
+                        "eventHubName": "[parameters('ehub_name')]"                        
+                    }
+                },
+                "compression": {
+                    "type": "None"
+                },
+                "serialization": {
+                    "type": "Json",
+                    "properties": {
+                        "encoding": "UTF8"
+                    }
+                }
+            }
+          }
+        ],
+        "transformation": {
+          "name": "Transformation",
+          "properties": {
+            "streamingUnits": 1,
+            "query": "SELECT\r\n    *\r\nINTO\r\n    [StreamTesting1]\r\nFROM\r\n    [rcpevents] TIMESTAMP BY EventTimeUtc\r\n\r\nSELECT\r\n    UserKey,\r\n    MIN(EventTimeUtc) AS window_start,\r\n    System.Timestamp() AS window_end,\r\n    DATEDIFF(s, MIN(EventTimeUtc), System.Timestamp()) AS duration_in_seconds\r\nINTO StreamTesting    \r\nFROM rcpevents TIMESTAMP BY EventTimeUtc\r\nGROUP BY UserKey, SessionWindow(minute, 2, 5) OVER (PARTITION BY UserKey)\r\n"
+          }
+        },
+        "outputs": [
+			{
+				"name": "StreamTesting",
+				"properties": {
+				      "datasource": {
+				      "type": "Microsoft.ServiceBus/Topic",
+				        "properties": {
+					        "topicName": "[parameters('topic_name1')]",
+					        "propertyColumns": [],
+					        "serviceBusNamespace": "[parameters('topic_namespace')]",
+					        "sharedAccessPolicyName": "[parameters('topic_sharedAccessPolicyName')]",
+                  			"sharedAccessPolicyKey": "[listkeys(resourceId(parameters('subscriptionID'), parameters('topic_ResourceGroupName'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('topic_namespace'), parameters('topic_sharedAccessPolicyName')), '2017-04-01').primaryKey]"
+				        }
+			        },
+			        "serialization": {
+				        "type": "Json",
+				          "properties": {
+					          "encoding": "UTF8",
+					          "format": "LineSeparated"
+				          }
+			        }
+			    }
+		    },
+		    {
+				"name": "StreamTesting1",
+				"properties": {
+				      "datasource": {
+				      "type": "Microsoft.ServiceBus/Topic",
+				        "properties": {
+					      "topicName": "[parameters('topic_name2')]",
+					      "propertyColumns": [],
+					      "serviceBusNamespace": "[parameters('topic_namespace')]",
+					      "sharedAccessPolicyName": "[parameters('topic_namespace')]",
+                		  "sharedAccessPolicyKey": "[listkeys(resourceId(parameters('subscriptionID'), parameters('topic_ResourceGroupName'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('topic_namespace'), parameters('topic_sharedAccessPolicyName')), '2017-04-01').primaryKey]"
+				        }
+				      },
+				      "serialization": {
+				        "type": "Json",
+				        "properties": {
+					      "encoding": "UTF8",
+					      "format": "LineSeparated"
+				        }
+				      }
+			    }
+			}
+        ]
+      }
+    }
+  ]
+}
