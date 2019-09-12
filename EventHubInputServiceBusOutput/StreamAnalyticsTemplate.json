@@ -14,9 +14,9 @@
         "ehub_ResourceGroupName": {
           "type":"String"
         },
-		"ehub_sharedAccessPolicyName": {
-		  "type":"String"
-		},
+	"ehub_sharedAccessPolicyName": {
+	  "type":"String"
+	},
         "topic_name1": {
           "type":"String"
         },
@@ -29,9 +29,9 @@
         "topic_ResourceGroupName": {
           "type":"String"
         },
-		"topic_sharedAccessPolicyName": {
-		  "type":"String"
-		},
+	"topic_sharedAccessPolicyName": {
+	  "type":"String"
+	},
         "subscriptionID": {
           "type":"String"
         }
@@ -88,7 +88,7 @@
           }
         },
         "outputs": [
-			{
+		   {
 				"name": "StreamTesting",
 				"properties": {
 				      "datasource": {
@@ -131,7 +131,7 @@
 				        }
 				      }
 			    }
-			}
+		     }
         ]
       }
     }
