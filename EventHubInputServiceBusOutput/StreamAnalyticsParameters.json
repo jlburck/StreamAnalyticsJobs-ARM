@@ -14,6 +14,10 @@
             "value": "ehubnamespace",
             "type":"String"
         },
+        "input_name": {
+		  "value": "inputname"
+          "type":"String"
+        },
         "topic_name1": {
             "value": "topicname1",
             "type":"String"
