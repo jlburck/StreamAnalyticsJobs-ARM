@@ -6,7 +6,7 @@
             "value":"jobname",
             "type":"String"
         },
-        "ehub_name": {
+        "ehubInput_name": {
             "value":"ehubname",
             "type":"String"
         },

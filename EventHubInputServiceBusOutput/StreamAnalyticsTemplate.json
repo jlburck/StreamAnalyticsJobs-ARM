@@ -5,7 +5,7 @@
 	"streamingjobs_name": {
           "type":"String"
         },
-        "ehub_name": {
+        "ehubInput_name": {
           "type":"String"
         },
         "ehub_namespace": {
@@ -17,9 +17,6 @@
 		"ehub_sharedAccessPolicyName": {
 		  "type":"String"
 		},
-        "input_name": {
-          "type":"String"
-        },
         "topic_name1": {
           "type":"String"
         },
@@ -68,7 +65,7 @@
                         "serviceBusNamespace": "[parameters('ehub_namespace')]",
                         "sharedAccessPolicyName": "[parameters('ehub_sharedAccessPolicyName')]",
                         "sharedAccessPolicyKey": "[listkeys(resourceId(parameters('subscriptionID'), parameters('ehub_ResourceGroupName'), 'Microsoft.EventHub/namespaces/authorizationRules', parameters('ehub_namespace'), parameters('ehub_sharedAccessPolicyName')), '2017-04-01').primaryKey]",
-                        "eventHubName": "[parameters('ehub_name')]"                        
+                        "eventHubName": "[parameters('ehubInput_name')]"                        
                     }
                 },
                 "compression": {
